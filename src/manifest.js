@@ -1,3 +1,5 @@
+// TODO we'll need a Sentry plugin
+
 const manifest = {
   server: {
     port: 8000,
@@ -13,8 +15,7 @@ const manifest = {
           }, 'stdout'],
         },
       },
-    },
-    {
+    }, {
       plugin: './modules/mongodb',
       options: {
         settings: {
@@ -25,6 +26,10 @@ const manifest = {
           },
         },
       },
+    }, {
+      plugin: './modules/auth',
+    }, {
+      plugin: './modules/api',
     }],
   },
 };
