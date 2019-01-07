@@ -40,7 +40,7 @@
     "nodemon": "^1.18.9"
   },
   "scripts": {
-    "dev": "./node_modules/.bin/nodemon --exec babel-node src/server.js",
+    "dev": "NODE_ENV=development ./node_modules/.bin/nodemon --exec babel-node src/server.js",
     "build": "babel src —-out-dir dist",
     "start": "node dist/server.js",
     "lint": "./node_modules/.bin/eslint src",

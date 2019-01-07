@@ -18,7 +18,7 @@ const authPlugin = (server) => {
 
   server.auth.strategy('jwt', 'jwt', {
     key: JWT_SECRET_KEY,
-    validateFunc: validate,
+    validate,
     verifyOptions: { algorithms: ['HS256'] },
   });
 

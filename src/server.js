@@ -1,10 +1,17 @@
 import Glue from 'glue';
 import dotenv from 'dotenv';
-import manifest from './manifest';
+import buildManifest from './manifest';
 
 dotenv.config(); // load env vars
 
 const options = { relativeTo: __dirname };
+
+const { SENTRY_PUBLIC_KEY, SENTRY_SECRET_KEY, SENTRY_PROJECT_ID } = process.env;
+const manifest = buildManifest({
+  SENTRY_PUBLIC_KEY,
+  SENTRY_SECRET_KEY,
+  SENTRY_PROJECT_ID,
+});
 
 const startServer = async () => {
   try {

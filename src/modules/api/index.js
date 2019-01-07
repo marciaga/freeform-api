@@ -12,7 +12,7 @@ import volunteerRoutes from './routes/volunteer';
 import getReport from './routes/report';
 import { API_BASE_URL } from './constants';
 
-const apiPlugin = (server, options, next) => {
+const apiPlugin = (server) => {
   // register routes
   showRoutes.map(r => server.route(r));
   userRoutes.map(r => server.route(r));
@@ -108,8 +108,6 @@ const apiPlugin = (server, options, next) => {
       },
     },
   });
-
-  next();
 };
 
 exports.plugin = {

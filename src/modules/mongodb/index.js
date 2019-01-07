@@ -41,7 +41,7 @@ const mongoPlugin = (serv, pluginOptions) => {
 
         server.log(['mongodb', 'info'], `MongoClient connection created for ${JSON.stringify(connectionOptionsToLog)}`);
 
-        expose.db = connection;
+        expose.db = connection.db();
 
         Object.keys(expose).forEach(key => server.expose(key, expose[key]));
 

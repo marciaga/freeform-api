@@ -1,23 +1,23 @@
 import Boom from 'boom';
 
-const getNowPlaying = async (request, reply) => {
+const getNowPlaying = async (request, h) => {
   const { db } = request.server.plugins.mongodb;
 
   try {
     const result = await db.collection('nowPlaying').findOne();
 
     if (!result) {
-      return reply({ success: false, message: 'Nothing is playing' });
+      return { success: false, message: 'Nothing is playing' };
     }
 
-    return reply(result);
+    return result;
   } catch (e) {
     console.log(e);
-    return reply(Boom.serverUnavailable());
+    return Boom.serverUnavailable();
   }
 };
 
-const updateNowPlaying = async (request, reply) => {
+const updateNowPlaying = async (request, h) => {
   const { playlistId, song, playedAt } = request.payload;
   const playedAtDate = new Date(playedAt);
 
@@ -50,16 +50,16 @@ const updateNowPlaying = async (request, reply) => {
     const { ok, nModified } = playlistResult;
 
     if (result.ok && ok && nModified) {
-      return reply({
+      return {
         success: true,
         value: nowPlayingData,
-      });
+      };
     }
 
-    return reply({ success: false, message: 'Could not set as Now Playing' });
+    return { success: false, message: 'Could not set as Now Playing' };
   } catch (e) {
     console.log(e);
-    return reply(Boom.internal('Something went wrong'));
+    return Boom.internal('Something went wrong');
   }
 };
 
