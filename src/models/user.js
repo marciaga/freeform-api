@@ -83,7 +83,7 @@ const loginHandler = (request) => { // eslint-disable-line
           idToken,
           scope: role,
           verified: true,
-        });
+        };
       }
 
       return { success: false, message: 'Bad credentials' };

@@ -3,9 +3,6 @@ import Boom from 'boom';
 const getNowPlaying = async (request) => {
   const { db } = request.server.plugins.mongodb;
 
-  ;
-
-  console.log('M', m);
   try {
     const result = await db.collection('nowPlaying').findOne();
 
