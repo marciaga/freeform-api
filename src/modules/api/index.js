@@ -26,9 +26,7 @@ const apiPlugin = (server) => {
     path: `${API_BASE_URL}/health`,
     method: 'GET',
     config: {
-      handler: (request, reply) => {
-        reply({ status: 'OK' });
-      },
+      handler: () => ({ status: 'OK' }),
       auth: {
         strategy: 'jwt',
         scope: ['admin'],

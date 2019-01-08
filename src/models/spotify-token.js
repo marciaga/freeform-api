@@ -4,7 +4,7 @@ import querystring from 'querystring';
 
 const SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/api/token';
 
-const getSpotifyToken = async (request, reply) => {
+const getSpotifyToken = async () => {
   try {
     // auth request to spotify
     const { data } = await axios.post(SPOTIFY_AUTH_URL,
@@ -19,13 +19,13 @@ const getSpotifyToken = async (request, reply) => {
 
     const { access_token } = data; // eslint-disable-line
 
-    return reply({
+    return {
       success: true,
       token: access_token,
-    });
+    };
   } catch (e) {
     console.log(e);
-    return reply(Boom.internal('Something went wrong getting a Spotify token'));
+    return Boom.internal('Something went wrong getting a Spotify token');
   }
 };
 

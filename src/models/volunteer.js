@@ -14,13 +14,13 @@ const volunteerFormSchema = Joi.object().keys({
   comments: Joi.string().optional(),
 });
 
-export const postVolunteerForm = (request, reply) => {
+export const postVolunteerForm = (request) => {
   const { db } = request.server.plugins.mongodb;
   const { payload } = request;
 
   const { error } = Joi.validate(payload, volunteerFormSchema);
   // send to sentry: error.details[0].message
-  const handleError = () => reply(Boom.badRequest('Failed validation'));
+  const handleError = () => Boom.badRequest('Failed validation');
 
   const addSubmission = async () => {
     try {
@@ -28,14 +28,13 @@ export const postVolunteerForm = (request, reply) => {
 
       const res = R.ifElse(
         () => result.ok === 1,
-        () => reply({ success: true }),
-        () => reply({ success: false }),
+        () => ({ success: true }),
+        () => ({ success: false }),
       );
 
       return res(result);
     } catch (e) {
-      // send to sentry
-      reply(Boom.badRequest('Failed to insert document'));
+      Boom.badRequest('Failed to insert document');
     }
   };
 
@@ -48,7 +47,7 @@ export const postVolunteerForm = (request, reply) => {
   validation(error);
 };
 
-export const getVolunteerReport = async (request, reply) => {
+export const getVolunteerReport = async (request) => {
   const { credentials } = request.auth;
   const { db, ObjectID } = request.server.plugins.mongodb;
   const {
@@ -85,7 +84,7 @@ export const getVolunteerReport = async (request, reply) => {
       .toArray();
 
     if (requestedByDj) {
-      return reply(result);
+      return result;
     }
 
     // query to join user first and last name
@@ -120,9 +119,9 @@ export const getVolunteerReport = async (request, reply) => {
       };
     });
 
-    return reply(transformed);
+    return transformed;
   } catch (err) {
     console.log(err);
-    return reply(Boom.internal('Failed to generate volunteer report.'));
+    return Boom.internal('Failed to generate volunteer report.');
   }
 };

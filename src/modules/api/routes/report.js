@@ -1,7 +1,7 @@
 import R from 'ramda';
 import Boom from 'boom';
 
-const getReport = async (request, reply) => {
+const getReport = async (request) => {
   const { db } = request.server.plugins.mongodb;
   const { startDate, endDate } = request.query;
 
@@ -36,10 +36,10 @@ const getReport = async (request, reply) => {
 
     const res = composeSongs(result);
 
-    return reply(res);
+    return res;
   } catch (err) {
     console.log(err);
-    return reply(Boom.internal('Failed to generate playlist report.'));
+    return Boom.internal('Failed to generate playlist report.');
   }
 };
 

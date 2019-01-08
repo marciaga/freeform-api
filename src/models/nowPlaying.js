@@ -1,8 +1,11 @@
 import Boom from 'boom';
 
-const getNowPlaying = async (request, h) => {
+const getNowPlaying = async (request) => {
   const { db } = request.server.plugins.mongodb;
 
+  ;
+
+  console.log('M', m);
   try {
     const result = await db.collection('nowPlaying').findOne();
 
@@ -17,7 +20,7 @@ const getNowPlaying = async (request, h) => {
   }
 };
 
-const updateNowPlaying = async (request, h) => {
+const updateNowPlaying = async (request) => {
   const { playlistId, song, playedAt } = request.payload;
   const playedAtDate = new Date(playedAt);
 

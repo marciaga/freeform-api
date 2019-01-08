@@ -9,7 +9,7 @@ const transporter = createTransport(ses({
   region: process.env.SES_REGION,
 }));
 
-const resetPassword = (request, reply) => {
+const resetPassword = (request) => {
   const { password } = request.payload;
   const { data } = request.pre;
   const { id } = data;
@@ -18,7 +18,7 @@ const resetPassword = (request, reply) => {
   hashPassword(password, async (error, hash) => {
     if (error) {
       console.log(error);
-      return reply(Boom.badRequest());
+      return Boom.badRequest();
     }
 
     try {
@@ -33,20 +33,20 @@ const resetPassword = (request, reply) => {
       const { ok, nModified } = response;
 
       if (ok && nModified) {
-        return reply({ success: true });
+        return { success: true };
       }
 
-      return reply({ success: false });
+      return { success: false };
     } catch (e) {
       console.log(e);
-      return reply(Boom.internal('Something went wrong'));
+      return Boom.internal('Something went wrong');
     }
   });
 };
 
 const setHost = str => (str.includes('localhost') ? `http://${str}` : str);
 
-const handlePasswordReset = async (request, reply) => {
+const handlePasswordReset = async (request, h) => {
   const { email } = request.payload;
   const { db } = request.server.plugins.mongodb;
 
@@ -69,10 +69,10 @@ const handlePasswordReset = async (request, reply) => {
       });
     }
     // either way respond with 200 so we don't inadvertently reveal users
-    return reply().code(200);
+    return h.response().code(200);
   } catch (e) {
     console.log(e);
-    return reply(Boom.internal('Something went wrong'));
+    return Boom.internal('Something went wrong');
   }
 };
 

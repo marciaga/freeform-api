@@ -60,7 +60,7 @@ const getShow = async (db, ObjectID, slug) => {
   }
 };
 
-const getPlaylistsByShow = async (request, reply) => {
+const getPlaylistsByShow = async (request) => {
   const { db, ObjectID } = request.server.plugins.mongodb;
   const { order } = request.query;
   const { slug, playlistId } = request.params;
@@ -83,14 +83,14 @@ const getPlaylistsByShow = async (request, reply) => {
         mergedData.playlists = playlists;
     }
 
-    return reply(mergedData);
+    return mergedData;
   } catch (err) {
     console.log(err);
-    return reply(Boom.internal('Something went wrong'));
+    return Boom.internal('Something went wrong');
   }
 };
 
-const createPlaylist = async (request, reply) => { // eslint-disable-line
+const createPlaylist = async (request, h) => { // eslint-disable-line
   const { db, ObjectID } = request.server.plugins.mongodb;
   const now = moment();
 
@@ -127,14 +127,14 @@ const createPlaylist = async (request, reply) => { // eslint-disable-line
     if (result.length) {
       const msg = playlistUpdateMessage('playlistAlreadyExists');
 
-      return reply({ success: false, message: msg });
+      return { success: false, message: msg };
     }
 
     try {
       Joi.validate(newPlaylist, playlistSchema, (err, value) => { // eslint-disable-line
         if (err) {
           console.log(err);
-          return reply(Boom.badRequest());
+          return Boom.badRequest();
         }
         // if value === null, object is valid
         if (value === null) {
@@ -144,7 +144,7 @@ const createPlaylist = async (request, reply) => { // eslint-disable-line
       // TODO - do we need to return something here?
     } catch (err) {
       console.log(err);
-      return reply(Boom.interval('Something went wrong'));
+      return Boom.interval('Something went wrong');
     }
 
     newPlaylist.showId = new ObjectID(showId);
@@ -152,7 +152,7 @@ const createPlaylist = async (request, reply) => { // eslint-disable-line
     db.collection('playlists').insert(newPlaylist, (err, doc) => {
       if (err) {
         console.log(err);
-        return reply(Boom.serverUnavailable());
+        return Boom.serverUnavailable();
       }
 
       const { ops } = doc;
@@ -160,16 +160,16 @@ const createPlaylist = async (request, reply) => { // eslint-disable-line
         i === 0
       ));
 
-      return reply({ doc: newDoc, success: true }).code(201);
+      return h.response({ doc: newDoc, success: true }).code(201);
     });
     // TODO do we need to return something here?
   } catch (err) {
     console.log(err);
-    return reply(Boom.internal('Something went wrong'));
+    return Boom.internal('Something went wrong');
   }
 };
 
-const deletePlaylist = async (request, reply) => {
+const deletePlaylist = async (request) => {
   const { db } = request.server.plugins.mongodb;
   const { playlistId } = request.params;
 
@@ -181,17 +181,17 @@ const deletePlaylist = async (request, reply) => {
     const { ok } = response;
 
     if (ok) {
-      return reply({ success: true });
+      return { success: true };
     }
 
-    return reply({ success: false, message: playlistUpdateMessage('playlistDeleteFail') });
+    return { success: false, message: playlistUpdateMessage('playlistDeleteFail') };
   } catch (e) {
     console.log(e);
-    return reply(Boom.internal('Something went wrong'));
+    return Boom.internal('Something went wrong');
   }
 };
 
-const addTrack = async (request, reply) => {
+const addTrack = async (request) => {
   const { db, ObjectID } = request.server.plugins.mongodb;
 
   try {
@@ -221,20 +221,20 @@ const addTrack = async (request, reply) => {
     const { ok } = response;
 
     if (ok) {
-      return reply({
+      return {
         success: true,
         track,
-      });
+      };
     }
 
-    return reply({ success: false, message: playlistUpdateMessage('noSuccess') });
+    return { success: false, message: playlistUpdateMessage('noSuccess') };
   } catch (err) {
     console.log(err);
-    return reply(Boom.internal('Something went wrong'));
+    return Boom.internal('Something went wrong');
   }
 };
 
-const updateTracks = async (request, reply) => {
+const updateTracks = async (request) => {
   const { db, ObjectID } = request.server.plugins.mongodb;
 
   try {
@@ -259,21 +259,21 @@ const updateTracks = async (request, reply) => {
     const { ok, nModified, n } = response;
 
     if (ok && nModified) {
-      return reply({ success: true, message: playlistUpdateMessage('songUpdated') });
+      return { success: true, message: playlistUpdateMessage('songUpdated') };
     }
 
     if (ok && n) {
-      return reply({ success: false, message: playlistUpdateMessage('noChange') });
+      return { success: false, message: playlistUpdateMessage('noChange') };
     }
 
-    return reply({ success: false, message: playlistUpdateMessage('noSuccess') });
+    return { success: false, message: playlistUpdateMessage('noSuccess') };
   } catch (err) {
     console.log(err);
-    return reply(Boom.internal('Something went wrong'));
+    return Boom.internal('Something went wrong');
   }
 };
 
-const updatePlaylistField = async (request, reply) => {
+const updatePlaylistField = async (request) => {
   const { db } = request.server.plugins.mongodb;
 
   try {
@@ -292,21 +292,21 @@ const updatePlaylistField = async (request, reply) => {
     const { ok, n } = response;
 
     if (ok) {
-      return reply({ success: true, message: playlistUpdateMessage(field) });
+      return { success: true, message: playlistUpdateMessage(field) };
     }
 
     if (ok && n) {
-      return reply({ success: false, message: playlistUpdateMessage('noChange') });
+      return { success: false, message: playlistUpdateMessage('noChange') };
     }
 
-    return reply({ success: false, message: playlistUpdateMessage('noSuccess') });
+    return { success: false, message: playlistUpdateMessage('noSuccess') };
   } catch (err) {
     console.log(err);
-    return reply(Boom.internal('Something went wrong'));
+    return Boom.internal('Something went wrong');
   }
 };
 
-const updateTrackOrder = async (request, reply) => {
+const updateTrackOrder = async (request) => {
   const { db, ObjectID } = request.server.plugins.mongodb;
 
   try {
@@ -329,17 +329,17 @@ const updateTrackOrder = async (request, reply) => {
     const { ok } = response;
 
     if (ok) {
-      return reply({ success: true });
+      return { success: true };
     }
 
-    return reply({ success: false, message: playlistUpdateMessage('noSuccess') });
+    return { success: false, message: playlistUpdateMessage('noSuccess') };
   } catch (err) {
     console.log(err);
-    return reply(Boom.internal('Something went wrong'));
+    return Boom.internal('Something went wrong');
   }
 };
 
-const deleteTrackFromPlaylist = async (request, reply) => {
+const deleteTrackFromPlaylist = async (request) => {
   const { db, ObjectID } = request.server.plugins.mongodb;
 
   try {
@@ -354,13 +354,13 @@ const deleteTrackFromPlaylist = async (request, reply) => {
     const { ok } = response;
 
     if (ok) {
-      return reply({ success: true });
+      return { success: true };
     }
 
-    return reply({ success: false, message: playlistUpdateMessage('noSuccess') });
+    return { success: false, message: playlistUpdateMessage('noSuccess') };
   } catch (err) {
     console.log(err);
-    return reply(Boom.internal('Something went wrong'));
+    return Boom.internal('Something went wrong');
   }
 };
 

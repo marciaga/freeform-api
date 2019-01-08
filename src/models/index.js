@@ -7,11 +7,11 @@ const s3 = new AWS.S3({
   region: process.env.S3_IMAGE_BUCKET_REGION,
 });
 
-const imageUpload = (request, reply) => { // eslint-disable-line
+const imageUpload = (request, h) => { // eslint-disable-line
   const { file } = request.payload;
 
   if (!file) {
-    return reply(Boom.badData('Failed to read file'));
+    return Boom.badData('Failed to read file');
   }
 
   if (file) {
@@ -26,17 +26,17 @@ const imageUpload = (request, reply) => { // eslint-disable-line
     }, (err, data) => {
       if (err) {
         console.log(err);
-        return reply(Boom.internal('S3 upload failed'));
+        return Boom.internal('S3 upload failed');
       }
 
       const { Location } = data;
 
-      return reply({ filePath: Location }).code(201);
+      return h.response({ filePath: Location }).code(201);
     });
   }
 };
 
-const imageRemove = (request, reply) => {
+const imageRemove = (request, h) => {
   const { fileName } = request.params;
   s3.deleteObject({
     Bucket: process.env.S3_IMAGE_BUCKET,
@@ -44,10 +44,10 @@ const imageRemove = (request, reply) => {
   }, (err) => {
     if (err) {
       console.log(err);
-      return reply(Boom.internal('S3 delete failed'));
+      return Boom.internal('S3 delete failed');
     }
 
-    return reply({ success: true }).code(201);
+    return h.response({ success: true }).code(201);
   });
 };
 

@@ -43,7 +43,7 @@ const getNextSequenceValue = async (sequenceName, db) => {
   }
 };
 
-const getProducts = async (request, reply) => {
+const getProducts = async (request) => {
   const { db } = request.server.plugins.mongodb;
   const { params, query } = request;
 
@@ -65,18 +65,18 @@ const getProducts = async (request, reply) => {
         const docs = results.map(doc => ({ ...doc, productId: doc._id }));
 
         if (slug && !docs.length) {
-            return reply(Boom.notFound('no products found'));
+            return Boom.notFound('no products found');
         }
 
-        return reply(docs);
+        return docs;
     } catch (e) {
         console.log(e);
 
-        return reply(Boom.serverUnavailable());
+        return Boom.serverUnavailable();
     }
 };
 
-const createProduct = async (request, reply) => {
+const createProduct = async (request, h) => {
     const { db } = request.server.plugins.mongodb;
     const newProduct = request.payload;
 
@@ -86,10 +86,10 @@ const createProduct = async (request, reply) => {
         if (err) {
             console.log(err);
 
-            return reply({
+            return {
                 success: false,
                 message: 'Validation Failed'
-            });
+            };
         }
 
         const id = await getNextSequenceValue('productid', db);
@@ -102,16 +102,16 @@ const createProduct = async (request, reply) => {
 
         const result = await db.collection('products').insertOne(doc).toJSON();
 
-        return reply(result).code(201)
+        return h.response(result).code(201)
     } catch (e) {
-        return reply({
+        return {
             success: false,
             message: 'Adding this product failed'
-        });
+        };
     }
 };
 
-const updateProduct = async (request, reply) => {
+const updateProduct = async (request) => {
     const { db } = request.server.plugins.mongodb;
     const { payload = {} } = request;
 
@@ -120,10 +120,10 @@ const updateProduct = async (request, reply) => {
     if (err) {
         console.log(err);
 
-        return reply({
+        return {
             success: false,
             message: 'Validation Failed'
-        });
+        };
     }
 
     try {
@@ -135,17 +135,17 @@ const updateProduct = async (request, reply) => {
         const { ok, nModified } = await result.toJSON();
 
         if (ok && nModified) {
-            return reply({ success: true });
+            return { success: true };
         }
 
-        return reply({ success: false, message: 'Update was not successful' });
+        return { success: false, message: 'Update was not successful' };
     } catch (e) {
         console.log(e);
-        return reply(Boom.serverUnavailable());
+        return Boom.serverUnavailable();
     }
 };
 
-const deleteProduct = async (request, reply) => {
+const deleteProduct = async (request) => {
     const { db } = request.server.plugins.mongodb;
     const { id } = request.query;
 
@@ -159,13 +159,13 @@ const deleteProduct = async (request, reply) => {
         const { ok, n } = response;
 
         if (ok && n) {
-            return reply({ success: true });
+            return { success: true };
         }
 
-        return reply({ success: false, message: 'Update was not successful' });
+        return { success: false, message: 'Update was not successful' };
     } catch (e) {
         console.log(e);
-        return reply(Boom.serverUnavailable());
+        return Boom.serverUnavailable();
     }
 };
 

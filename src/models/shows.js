@@ -69,11 +69,11 @@ const determineDayOrder = (start, data) => {
   return finalSort.reduce((a, b) => [...a, ...b]);
 };
 
-const getShows = async (request, reply) => {
+const getShows = async (request, h) => {
   const { mongodb } = request.server.plugins;
 
   if (!mongodb) {
-    return reply({ success: false, message: 'No DB connection' });
+    return { success: false, message: 'No DB connection' };
   }
   const { db, ObjectID } = mongodb;
   const { id } = request.params;
@@ -123,15 +123,15 @@ const getShows = async (request, reply) => {
     return Promise.all(transformedResult).then((r) => {
       const returnVal = startWeek ? determineDayOrder(startWeek, r) : r;
 
-      reply(returnVal);
+      return h.response(returnVal);
     });
   } catch (e) {
     console.log(e);
-    return reply(Boom.serverUnavailable());
+    return Boom.serverUnavailable();
   }
 };
 
-const updateShow = (request, reply) => { // eslint-disable-line
+const updateShow = (request, h) => { // eslint-disable-line
   const { db, ObjectID } = request.server.plugins.mongodb;
   const show = request.payload;
 
@@ -140,10 +140,10 @@ const updateShow = (request, reply) => { // eslint-disable-line
   if (err) {
     console.log(err);
 
-    return reply({
+    return {
       success: false,
       message: 'Validation Failed',
-    });
+    };
   }
 
   const showId = new ObjectID(show._id);
@@ -157,22 +157,22 @@ const updateShow = (request, reply) => { // eslint-disable-line
   db.collection('shows').update({ _id: showId }, fieldsToUpdate, (error, result) => {
     if (error) {
       console.log(error);
-      return reply(Boom.serverUnavailable());
+      return Boom.serverUnavailable();
     }
     // response, e.g. { ok: 1, nModified: 1, n: 1 }
     const response = result.toJSON();
     const { ok, nModified } = response;
 
     if (ok && nModified) {
-      return reply({ success: true });
+      return { success: true };
     }
 
-    return reply({ success: false, message: 'Update was not successful' });
+    return { success: false, message: 'Update was not successful' };
   });
   // TODO - do we need to return something?
 };
 
-const upsertShow = (request, reply) => {
+const upsertShow = (request, h) => {
   const { db } = request.server.plugins.mongodb;
   const newShow = request.payload;
 
@@ -181,13 +181,13 @@ const upsertShow = (request, reply) => {
     async (e, cursor) => { // eslint-disable-line
       if (e) {
         console.log(e);
-        return reply(Boom.serverUnavailable());
+        return Boom.serverUnavailable();
       }
 
       const existingShow = await cursor.toArray();
 
       if (existingShow.length) {
-        return reply(Boom.unauthorized('A record with that show name already exists'));
+        return Boom.unauthorized('A record with that show name already exists');
       }
 
       const { err } = Joi.validate(newShow, showSchema);
@@ -195,16 +195,16 @@ const upsertShow = (request, reply) => {
       if (err) {
         console.log(err);
 
-        return reply({
+        return {
           success: false,
           message: 'Validation Failed',
-        });
+        };
       }
       // insert the record
       db.collection('shows').insert(newShow, (error, doc) => {
         if (error) {
           console.log(error);
-          return reply(Boom.serverUnavailable());
+          return Boom.serverUnavailable();
         }
 
         const { ops } = doc;
@@ -212,13 +212,13 @@ const upsertShow = (request, reply) => {
           i === 0
         ));
 
-        return reply(newDoc).code(201);
+        return h.response(newDoc).code(201);
       });
     });
   // TODO do we need to return something?
 };
 
-const removeShow = (request, reply) => {
+const removeShow = (request) => {
   const { db, ObjectID } = request.server.plugins.mongodb;
   const { id } = request.query;
   const showId = new ObjectID(id);
@@ -226,17 +226,17 @@ const removeShow = (request, reply) => {
   db.collection('shows').remove({ _id: showId }, { justOne: true }, (err, result) => {
     if (err) {
       console.log(err);
-      return reply(Boom.serverUnavailable());
+      return Boom.serverUnavailable();
     }
     // result, e.g. { ok: 1, n: 0 }
     const response = result.toJSON();
     const { ok, n } = response;
 
     if (ok && n) {
-      return reply({ success: true });
+      return { success: true };
     }
 
-    return reply({ success: false, message: 'Update was not successful' });
+    return { success: false, message: 'Update was not successful' };
   });
 };
 
