@@ -1,0 +1,21 @@
+version: '2'
+services:
+  app:
+    image: 248536655549.dkr.ecr.us-west-2.amazonaws.com/freeform-api
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: freeform-api
+        awslogs-region: us-west-2
+        awslogs-stream-prefix: freeformapi
+
+  nginx:
+    image: 248536655549.dkr.ecr.us-west-2.amazonaws.com/reverse-proxy
+    ports:
+      - 80:80
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: freeform-api-nginx
+        awslogs-region: us-west-2
+        awslogs-stream-prefix: freeformapinginx

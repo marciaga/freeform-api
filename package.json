@@ -41,8 +41,8 @@
   },
   "scripts": {
     "dev": "NODE_ENV=development ./node_modules/.bin/nodemon --exec babel-node src/server.js",
-    "build": "babel src —-out-dir dist",
-    "start": "node dist/server.js",
+    "build": "./node_modules/.bin/babel src -d lib --copy-files",
+    "start": "node lib/server.js",
     "lint": "./node_modules/.bin/eslint src",
     "test": "./node_modules/.bin/jest"
   }
