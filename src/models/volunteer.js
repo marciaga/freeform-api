@@ -94,9 +94,11 @@ export const getVolunteerReport = async (request) => {
           $in: result.map(u => new ObjectID(u.userId)),
         },
       }, {
-        firstName: 1,
-        lastName: 1,
-        email: 1,
+        projection: {
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+        },
       })
       .toArray();
 

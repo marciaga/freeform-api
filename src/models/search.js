@@ -19,7 +19,11 @@ const userSearchHandler = (request) => {
       },
     }],
   },
-  { password: 0 }, async (err, cursor) => {
+  {
+    projection: {
+      password: 0,
+    },
+  }, async (err, cursor) => {
     if (err) {
       console.log(err);
       return Boom.serverUnavailable();

@@ -52,7 +52,7 @@ const handlePasswordReset = async (request, h) => {
 
   try {
     const result = await db.collection('users').findOne({ email },
-      { password: 0 });
+      { projection: { password: 0 } });
     // result is either an object or null
     if (result) {
       const { host } = request.info;

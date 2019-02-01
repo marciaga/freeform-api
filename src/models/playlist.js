@@ -47,8 +47,10 @@ const getShow = async (db, ObjectID, slug) => {
     const users = await db.collection('users').find({
       _id: { $in: objectIds },
     }, {
-      _id: 0,
-      displayName: 1,
+      projection: {
+        _id: 0,
+        displayName: 1,
+      },
     }).toArray();
 
     show.users = users.map(user => user.displayName);

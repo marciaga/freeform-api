@@ -111,8 +111,10 @@ const getShows = async (request, h) => {
       const users = await db.collection('users').find({
         _id: { $in: objectIds },
       }, {
-        _id: 1,
-        displayName: 1,
+        projection: {
+          _id: 1,
+          displayName: 1,
+        },
       }).toArray();
 
       doc.users = users; // eslint-disable-line
@@ -177,7 +179,9 @@ const upsertShow = (request, h) => {
   const newShow = request.payload;
 
   db.collection('shows').find({ showName: newShow.showName },
-    {}, { limit: 1 },
+    {
+      limit: 1,
+    },
     async (e, cursor) => { // eslint-disable-line
       if (e) {
         console.log(e);

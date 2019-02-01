@@ -96,7 +96,11 @@ const loginHandler = (request) => { // eslint-disable-line
 const getUsers = (request) => {
   const { db } = request.server.plugins.mongodb;
 
-  db.collection('users').find({}, { password: 0 }, async (err, cursor) => {
+  db.collection('users').find({}, {
+    projection: {
+      password: 0,
+    },
+  }, async (err, cursor) => {
     if (err) {
       console.log(err);
       return Boom.create(503, 'Service Unavailble');
