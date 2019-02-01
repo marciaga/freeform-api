@@ -24,6 +24,7 @@ export const postVolunteerForm = (request) => {
 
   const addSubmission = async () => {
     try {
+      // TODO - INSERT is deprecated
       const { result } = await db.collection('volunteerhours').insert(payload);
 
       const res = R.ifElse(

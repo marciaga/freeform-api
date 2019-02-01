@@ -150,7 +150,7 @@ const createPlaylist = async (request, h) => { // eslint-disable-line
     }
 
     newPlaylist.showId = new ObjectID(showId);
-
+    // TODO - INSERT is deprecated
     db.collection('playlists').insert(newPlaylist, (err, doc) => {
       if (err) {
         console.log(err);
@@ -206,7 +206,7 @@ const addTrack = async (request) => {
     // TODO when adding a track, just set the playedAt to the current date.
     // subsequent updates via nowPlaying API may modify this value
     track.playedAt = playedAt;
-
+    // TODO - UPDATE is deprecated
     const result = await db.collection('playlists').update(
       { playlistId },
       {
@@ -242,7 +242,7 @@ const updateTracks = async (request) => {
   try {
     const track = request.payload;
     const { playlistId } = request.params;
-
+    // TODO - UPDATE is deprecated
     const result = await db.collection('playlists').update(
       {
         playlistId,
@@ -285,6 +285,7 @@ const updatePlaylistField = async (request) => {
     const dataToUpdate = field === 'playlistDate'
       ? { [field]: new Date(data[field]) }
       : { [field]: data[field] };
+    // TODO - UPDATE is deprecated
     const result = await db.collection('playlists').update(
       { playlistId },
       { $set: dataToUpdate },
@@ -321,7 +322,7 @@ const updateTrackOrder = async (request) => {
     }));
 
     const { playlistId } = request.params;
-
+    // TODO - UPDATE is deprecated
     const result = await db.collection('playlists').update(
       { playlistId },
       { $set: { songs: tracks } },
@@ -346,7 +347,7 @@ const deleteTrackFromPlaylist = async (request) => {
 
   try {
     const { playlistId, trackId } = request.params;
-
+    // TODO - UPDATE is deprecated
     const result = await db.collection('playlists').update(
       { playlistId }, { $pull: { songs: { id: new ObjectID(trackId) } } },
     );

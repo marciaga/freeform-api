@@ -29,6 +29,7 @@ const addPropertyIfExists = ary => ary.reduce((o, v) => {
 
 const getNextSequenceValue = async (sequenceName, db) => {
   try {
+    // TODO FINDandMODIFY is deprecated
     const { value } = await db.collection('counters').findAndModify(
       { _id: sequenceName },
       null,
@@ -127,6 +128,7 @@ const updateProduct = async (request) => {
     }
 
     try {
+        // TODO - UPDATE is deprecated
         const result = await db.collection('products').update(
             { _id: payload._id },
             payload
@@ -150,6 +152,7 @@ const deleteProduct = async (request) => {
     const { id } = request.query;
 
     try {
+        // TODO - REMOVE is deprecated
         const result = await db.collection('products').remove(
             { _id: parseInt(id) },
             { justOne: true }

@@ -147,7 +147,7 @@ const createUser = (request, h) => {
       console.log(error);
       return Boom.badRequest();
     }
-
+    // TODO - INSERT is deprecated
     db.collection('users').insert({
       displayName,
       email,
@@ -245,7 +245,7 @@ const updateUser = (request) => {
 
   const userId = new ObjectID(user._id);
   const { _id, ...fieldsToUpdate } = user;
-
+  // TODO - UPDATE is deprecated
   db.collection('users').update({ _id: userId },
     { $set: fieldsToUpdate },
     (e, result) => {
@@ -269,7 +269,7 @@ const deleteUser = (request) => {
   const { db, ObjectID } = request.server.plugins.mongodb;
   const { id } = request.query;
   const userId = new ObjectID(id);
-
+  // TODO - REMOVE is deprecated
   db.collection('users').remove({ _id: userId }, { justOne: true }, (err, result) => {
     if (err) {
       console.log(err);
@@ -347,6 +347,7 @@ const updateField = async (id, fieldName, value, db, ObjectID) => {
   const userId = new ObjectID(id);
 
   try {
+    // TODO - UPDATE is deprecated
     const result = await db.collection('users').update(
       { _id: userId },
       {

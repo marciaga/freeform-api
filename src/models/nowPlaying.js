@@ -37,11 +37,11 @@ const updateNowPlaying = async (request) => {
       nowPlayingData,
       {
         upsert: true,
-        returnNewDocument: true,
+        returnOriginal: false,
       });
 
     const pid = playlistId;
-
+    // TODO - UPDATE is deprecated
     const res = await db.collection('playlists').update(
       { playlistId: pid, 'songs.id': nowPlayingData.songId },
       { $set: { 'songs.$.playedAt': playedAtDate } },

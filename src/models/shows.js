@@ -156,6 +156,7 @@ const updateShow = (request, h) => { // eslint-disable-line
     fieldsToUpdate.users = show.users.map(u => new ObjectID(u.trim()));
   }
 
+  // TODO - UPDATE is deprecated
   db.collection('shows').update({ _id: showId }, fieldsToUpdate, (error, result) => {
     if (error) {
       console.log(error);
@@ -204,7 +205,7 @@ const upsertShow = (request, h) => {
           message: 'Validation Failed',
         };
       }
-      // insert the record
+      // TODO - INSERT is deprecated
       db.collection('shows').insert(newShow, (error, doc) => {
         if (error) {
           console.log(error);
@@ -226,7 +227,7 @@ const removeShow = (request) => {
   const { db, ObjectID } = request.server.plugins.mongodb;
   const { id } = request.query;
   const showId = new ObjectID(id);
-
+  // TODO - REMOVE is deprecated
   db.collection('shows').remove({ _id: showId }, { justOne: true }, (err, result) => {
     if (err) {
       console.log(err);
