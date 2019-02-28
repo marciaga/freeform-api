@@ -1,4 +1,16 @@
-the sentry client is exposed via `request.server.plugins['hapi-sentry'].client`
+# Development
+Prequisites: 
+`yarn`
+`node` >= 10.x.x
+
+Clone the repo and `cd` into it, then run
+```
+$ yarn
+```
+
+Obtain a copy of the `.env` file
+
+Connection to the staging database requires your IP to be whitelisted, so contact a developer who can provide access.
 
 # Deploy
 
